@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <style>
+        body { font-family: Arial; background: #0f0f1a; color: white; padding: 20px; }
+        .post { background: #1a1a2e; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { background: #ef4444; color: white; border: none; padding: 8px 12px; cursor: pointer; margin: 5px; }
+        input, select { padding: 8px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Admin Panel</h1>
+    <a href="/">← Back to Board</a>
+
+    <h2>Time Restriction Settings</h2>
+    <form method="POST">
+        <input type="hidden" name="password" value="{{ request.form.password if request.method=='POST' else '' }}">
+        Start Hour: <input type="number" name="start_hour" min="0" max="23" value="{{ settings.start_hour }}"> 
+        End Hour: <input type="number" name="end_hour" min="0" max="23" value="{{ settings.end_hour }}">
+        <button type="submit">Update Allowed Hours</button>
+    </form>
+
+    <h2>Posts</h2>
+    {% for post in posts %}
+    <div class="post">
+        <small>{{ post.timestamp.strftime('%b %d %H:%M') }}</small><br>
+        {% if post.message %}<p>{{ post.message }}</p>{% endif %}
+        {% if post.image_filename %}<img src="{{ url_for('uploaded_file', filename=post.image_filename) }}" width="300"><br>{% endif %}
+        {% if post.video_filename %}<video width="300" controls><source src="{{ url_for('uploaded_file', filename=post.video_filename) }}"></video>{% endif %}
+        
+        <form method="POST" style="display:inline;">
+            <input type="hidden" name="password" value="{{ request.form.password if request.method=='POST' else '' }}">
+            <input type="hidden" name="delete_id" value="{{ post.id }}">
+            <button type="submit">Delete</button>
+        </form>
+    </div>
+    {% endfor %}
+</body>
+</html>
