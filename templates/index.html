@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elizade Anonymous Board</title>
+    <style>
+        :root {
+            --bg: #0f0f1a;
+            --card: #1a1a2e;
+            --text: #e0e0ff;
+        }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 20px; 
+        }
+        .container { max-width: 900px; margin: auto; }
+        h1 { text-align: center; color: #a0a0ff; }
+        form { background: var(--card); padding: 25px; border-radius: 16px; margin: 20px 0; }
+        textarea, input[type="file"] { width: 100%; padding: 12px; margin: 10px 0; background: #16213e; border: none; border-radius: 8px; color: white; }
+        button { padding: 14px 30px; background: #6366f1; color: white; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; }
+        .post { background: var(--card); padding: 20px; margin: 15px 0; border-radius: 16px; }
+        .post img, .post video { max-width: 100%; border-radius: 12px; margin-top: 10px; }
+        .timestamp { color: #888; font-size: 0.85em; }
+        .theme-toggle { position: fixed; top: 20px; right: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        <h1>🕵️ Elizade Anonymous Board</h1>
+        <p>Anyone with the link can post. Messages auto-delete after 2 weeks.</p>
+        
+        <form method="POST" enctype="multipart/form-data">
+            <textarea name="message" rows="4" placeholder="Write a message..."></textarea><br>
+            <input type="file" name="image" accept="image/*"><br>
+            <input type="file" name="video" accept="video/*"><br><br>
+            <button type="submit">Post Anonymously</button>
+        </form>
+
+        <h2>Recent Posts</h2>
+        {% for post in posts %}
+        <div class="post">
+            <div class="timestamp">{{ post.timestamp.strftime('%b %d, %Y - %H:%M') }}</div>
+            {% if post.message %}<p>{{ post.message }}</p>{% endif %}
+            {% if post.image_filename %}
+            <img src="{{ url_for('uploaded_file', filename=post.image_filename) }}" alt="image">
+            {% endif %}
+            {% if post.video_filename %}
+            <video controls>
+                <source src="{{ url_for('uploaded_file', filename=post.video_filename) }}">
+            </video>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.style.background = document.body.style.background === 'rgb(15, 15, 26)' ? '#f0f4f8' : '#0f0f1a';
+        }
+    </script>
+</body>
+          </html>
